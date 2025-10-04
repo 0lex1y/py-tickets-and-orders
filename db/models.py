@@ -68,7 +68,7 @@ class Order(models.Model):
         related_name="orders")
 
     def __str__(self) -> str:
-        show_time = self.created_at.strftime('%Y-%m-%d %H:%M:%S')
+        show_time = self.created_at.strftime("%Y-%m-%d %H:%M:%S")
         return f"<Order: {show_time}>"
 
     class Meta:
