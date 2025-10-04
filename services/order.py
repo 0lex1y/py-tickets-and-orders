@@ -17,8 +17,11 @@ def create_order(
         username: str,
         date: str = None) -> Order:
     user = User.objects.get(username=username)
-    created_at = datetime.strptime(date, "%Y-%m-%d %H:%M") if date else None
-    order = Order.objects.create(user=user, created_at=created_at)
+    order = Order.objects.create(user=user)
+    if date:
+        order.create_at = datetime.strptime(date, "%Y-%m-%d %H:%M")
+        order.save(update_fields=["created_at"])
+
     for ticket_dict in tickets:
         Ticket.objects.create(
             order=order,
