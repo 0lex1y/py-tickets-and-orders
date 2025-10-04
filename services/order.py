@@ -1,7 +1,6 @@
-from datetime import datetime, timezone
+from datetime import datetime
 
 from django.db.models import QuerySet
-from django.template.defaulttags import ifchanged
 
 from db.models import Ticket, Order
 
