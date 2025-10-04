@@ -1,17 +1,26 @@
+import datetime
 from django.db.models import QuerySet
 
-from db.models import Ticket, Order, User
+from db.models import Ticket, Order
 
 from django.db import transaction
 
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
+
+
+@transaction.atomic
 def create_order(
         tickets: list[dict],
         username: str,
-        date: str = None) -> dict:
+        date: str = None) -> Order:
     user = User.objects.get(username=username)
-    with transaction.atomic():
-        order = Order.objects.create(user=user, created_at=date)
+    if date:
+        my_date = datetime.datetime.fromisoformat(date)
+        order = Order.objects.create(user=user, created_at=my_date)
+    else:
+        order = Order.objects.create(user=user)
         for ticket_dict in tickets:
             Ticket.objects.create(
                 order=order,
