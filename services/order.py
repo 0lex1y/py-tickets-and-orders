@@ -1,5 +1,7 @@
-import datetime
+from datetime import datetime, timezone
+
 from django.db.models import QuerySet
+from django.template.defaulttags import ifchanged
 
 from db.models import Ticket, Order
 
@@ -16,18 +18,15 @@ def create_order(
         username: str,
         date: str = None) -> Order:
     user = User.objects.get(username=username)
-    if date:
-        my_date = datetime.datetime.fromisoformat(date)
-        order = Order.objects.create(user=user, created_at=my_date)
-    else:
-        order = Order.objects.create(user=user)
-        for ticket_dict in tickets:
-            Ticket.objects.create(
-                order=order,
-                movie_session_id=ticket_dict["movie_session"],
-                seat=ticket_dict["seat"],
-                row=ticket_dict["row"],
-            )
+    created_at = datetime.strptime(date, "%Y-%m-%d %H:%M") if date else None
+    order = Order.objects.create(user=user, created_at=created_at)
+    for ticket_dict in tickets:
+        Ticket.objects.create(
+            order=order,
+            movie_session_id=ticket_dict["movie_session"],
+            seat=ticket_dict["seat"],
+            row=ticket_dict["row"],
+        )
     return order
 
 
